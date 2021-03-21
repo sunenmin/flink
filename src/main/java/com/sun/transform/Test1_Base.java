@@ -15,7 +15,7 @@ import org.apache.flink.util.Collector;
  * @Date 2021/3/20 9:17 下午
  * @Version 1.0
  **/
-public class Test_Base {
+public class Test1_Base {
     public static void main(String[] args) throws Exception{
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 

@@ -12,7 +12,7 @@ import java.util.Random;
  * @Date 2021/3/20 8:38 下午
  * @Version 1.0
  **/
-public class Test_User_Defined {
+public class Test4_User_Defined {
     public static void main(String[] args) throws Exception{
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
@@ -29,16 +29,18 @@ public class Test_User_Defined {
         @Override
         public void run(SourceContext<BatteryData> sourceContext) throws Exception {
             Random random = new Random();
-            for (int var1 = 0; var1 < 10; var1 ++){
-                BatteryData batteryData = new BatteryData();
-                batteryData.setVin("LGWWCM00" + (var1 + 1));
-                batteryData.setTimestamp(System.currentTimeMillis());
-                batteryData.setTotalVoltage(321.23 + (random.nextGaussian() * 10));
-                batteryData.setTotalCurrent(50 + (random.nextGaussian()*10));
-                batteryData.setVehicleChrgSts(Short.valueOf(random.nextInt(2) + ""));
-                sourceContext.collect(batteryData);
+            while (running){
+                for (int var1 = 0; var1 < 10; var1 ++){
+                    BatteryData batteryData = new BatteryData();
+                    batteryData.setVin("LGWWCM00" + (var1 + 1));
+                    batteryData.setTimestamp(System.currentTimeMillis());
+                    batteryData.setTotalVoltage(321.23 + (random.nextGaussian() * 10));
+                    batteryData.setTotalCurrent(50 + (random.nextGaussian()*10));
+                    batteryData.setVehicleChrgSts(Short.valueOf(random.nextInt(2) + ""));
+                    sourceContext.collect(batteryData);
 
-                Thread.sleep(2000);
+                    Thread.sleep(1000);
+                }
             }
 
         }

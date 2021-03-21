@@ -13,7 +13,7 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
  * @Date 2021/3/20 10:40 下午
  * @Version 1.0
  **/
-public class Test_RollingAggregation {
+public class Test2_RollingAggregation {
     public static void main(String[] args) throws Exception{
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 

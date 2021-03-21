@@ -2,22 +2,19 @@ package com.sun.transform;
 
 import com.sun.models.BatteryData;
 import org.apache.flink.api.common.functions.MapFunction;
-import org.apache.flink.api.common.functions.ReduceFunction;
 import org.apache.flink.streaming.api.datastream.DataStream;
-import org.apache.flink.streaming.api.datastream.DataStreamSource;
-import org.apache.flink.streaming.api.datastream.KeyedStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 
 /**
  * @Author Matt Sun
- * @Date 2021/3/21 7:05 上午
+ * @Date 2021/3/21 9:42 上午
  * @Version 1.0
  **/
-public class Test_Reduce {
+public class Test6_Partition {
     public static void main(String[] args) throws Exception{
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
-        env.setParallelism(1);
+        env.setParallelism(4);
 
         DataStream<String> inputStream = env.readTextFile("/Users/mattsun/IdeaProjects/flink-study/src/main/resources/BatteryDate.txt");
 
@@ -30,19 +27,13 @@ public class Test_Reduce {
             }
         });
 
-//        KeyedStream<BatteryData, String> keyedStream1 = dataStream.keyBy(data -> data.getVin());
-        KeyedStream<BatteryData, String> keyedStream = dataStream.keyBy(BatteryData::getVin);
+        DataStream<BatteryData> shuffleStream = dataStream.shuffle();
 
-        //reduce聚合，根据vin号聚合
-        DataStream<BatteryData> reduceStream = keyedStream.reduce(new ReduceFunction<BatteryData>() {
-            @Override
-            public BatteryData reduce(BatteryData value1, BatteryData value2) throws Exception {
-                return new BatteryData(value1.getVin(), value2.getTimestamp(), Math.max(value1.getTotalVoltage(), value2.getTotalVoltage()),
-                        Math.min(value1.getTotalCurrent(), value2.getTotalCurrent()), Short.valueOf("1"));
-            }
-        });
+        dataStream.keyBy("vin").print();
 
-        reduceStream.print();
+//        shuffleStream.print("shuffleStream:");
+//        dataStream.print("dataStream:");
+
 
         env.execute();
     }

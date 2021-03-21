@@ -12,7 +12,7 @@ import java.util.Arrays;
  * @Date 2021/3/20 7:11 下午
  * @Version 1.0
  **/
-public class Test_Collections {
+public class Test2_Collections {
 
     public static void main(String[] args) throws Exception {
         //1.创建流处理执行环境

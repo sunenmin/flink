@@ -13,7 +13,7 @@ import java.util.Properties;
  * @Date 2021/3/20 8:11 下午
  * @Version 1.0
  **/
-public class Test_Kafka {
+public class Test3_Kafka {
     public static void main(String[] args) throws Exception{
         StreamExecutionEnvironment env = StreamExecutionEnvironment.getExecutionEnvironment();
 
