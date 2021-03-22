@@ -2,14 +2,21 @@ package com.sun.window;
 
 import com.sun.models.BatteryData;
 import com.sun.source.Test4_User_Defined;
+import org.apache.commons.collections.IteratorUtils;
 import org.apache.flink.api.common.functions.AggregateFunction;
 import org.apache.flink.api.common.functions.MapFunction;
 import org.apache.flink.api.common.serialization.SimpleStringSchema;
+import org.apache.flink.api.java.tuple.Tuple;
+import org.apache.flink.api.java.tuple.Tuple3;
 import org.apache.flink.streaming.api.datastream.DataStream;
 import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
+import org.apache.flink.streaming.api.functions.windowing.WindowFunction;
 import org.apache.flink.streaming.api.windowing.time.Time;
+import org.apache.flink.streaming.api.windowing.windows.TimeWindow;
 import org.apache.flink.streaming.connectors.kafka.FlinkKafkaConsumer011;
 import org.apache.flink.table.runtime.aggregate.AggregateAggFunction;
+import org.apache.flink.util.Collector;
+import org.apache.flink.util.IterableUtils;
 
 import java.io.InputStream;
 import java.util.Properties;
@@ -44,6 +51,7 @@ public class Test1_TimeWindow {
         });
 
 
+        //增量聚合函数
         DataStream<Integer> resultStream = dataStream.keyBy("vin")
                 .timeWindow(Time.seconds(15))
                 .aggregate(new AggregateFunction<BatteryData, Integer, Integer>() {
@@ -71,8 +79,22 @@ public class Test1_TimeWindow {
                     }
                 });
 
+        //全窗口函数
+        DataStream<Tuple3<String, Long, Integer>> result2Stream = dataStream.keyBy("vin")
+                .timeWindow(Time.seconds(15))
+                .apply(new WindowFunction<BatteryData, Tuple3<String, Long, Integer>, Tuple, TimeWindow>() {
+                    @Override
+                    public void apply(Tuple tuple, TimeWindow window, Iterable<BatteryData> input, Collector<Tuple3<String, Long, Integer>> out) throws Exception {
+                        String id = tuple.getField(0);
+                        Long endTime =window.getEnd();
+                        Integer count = IteratorUtils.toList(input.iterator()).size();
 
-        resultStream.print();
+                        out.collect(new Tuple3<>(id, endTime, count));
+                    }
+                });
+
+
+        result2Stream.print();
 
         env.execute();
     }
