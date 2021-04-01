@@ -17,6 +17,7 @@ import org.apache.lucene.document.DoubleRange;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -61,6 +62,8 @@ public class Test1_KeyedState {
         ValueState<List> voltageList;
         ListState<Double> listState;
         MapState<String, Integer> mapState;
+        MapState<String, MapState<Integer, Double>> mapState1;
+
         @Override
         public void open(Configuration parameters) throws Exception {
             batteryDataValueState = getRuntimeContext().getState(new ValueStateDescriptor<BatteryData>("batteryStatus", BatteryData.class));
